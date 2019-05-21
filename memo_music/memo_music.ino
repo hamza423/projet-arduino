@@ -92,83 +92,183 @@
 #define melodyPin 3
 /******MELODY-MARIO**********/
 
-int partie1[] = {
+int melody1[] = {
   NOTE_E7, NOTE_E7, 0, NOTE_E7,         //On définie première partie de la musique 
   0, NOTE_C7, NOTE_E7, 0,
   NOTE_G7, 0, 0,  0,
   NOTE_G6, 0, 0, 0};
 
-int partie2[] = {NOTE_G6, NOTE_E7, NOTE_G7,         //On définie deuxième partie de la musique 
+int melody2[] = {NOTE_G6, NOTE_E7, NOTE_G7,         //On définie deuxième partie de la musique 
   NOTE_A7, 0, NOTE_F7, NOTE_G7,
   0, NOTE_E7, 0, NOTE_C7,
   NOTE_D7, NOTE_B6, 0, 0};
 
-int partie3[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie troisième partie de la musique 
+int melody3[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie troisième partie de la musique 
   0, 0, NOTE_E6, 0,
   0, NOTE_A6, 0, NOTE_B6,
   0, NOTE_AS6, NOTE_A6, 0};
 
 
-int partie4[] = {NOTE_G6, NOTE_E7, NOTE_G7,          //On définie quatrième partie de la musique
+int melody4[] = {NOTE_G6, NOTE_E7, NOTE_G7,          //On définie quatrième partie de la musique
   NOTE_A7, 0, NOTE_F7, NOTE_G7,
   0, NOTE_E7, 0, NOTE_C7,
   NOTE_D7, NOTE_B6, 0, 0};
 
 
-int partie5[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie cinquième partie de la musique
+int melody5[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie cinquième partie de la musique
   0, 0, NOTE_E6, 0,
   0, NOTE_A6, 0, NOTE_B6,
   0, NOTE_AS6, NOTE_A6, 0,
 };
 
-int sequence[5]; //on ne dépasse pas la partie 5 
+int noteDurations[]= {
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  9, 9, 9,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  9, 9, 9,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+};
+
+int sequence[5]; //on ne dépasse pas la partie 5
 
 //On définie les boutons
-int bouton1 = 1;
-int bouton2 = 2; 
-int bouton3 = 3; 
-int bouton4 = 4; 
-int bouton5 = 5; 
-int bouton6 = 6; //bouton validation 
-
-int led5 = 8; //led RGB , rouge si c'est faux, vers si c'est juste
-
-
-int buzz = 7; //buzzer
-
+int button1 = 16;
+int button2 = 5; 
+int button3 = 4; 
+int button4 = 0; 
+int button5 = 2; 
+//int bouton6 = 6; //bouton validation 
 
 void setup() {
   //On définie les entrée et sortie de chaque bouton + le buzzer (INPUT:entrée | OUTPUT:sortie)
-  pinMode(bouton1, INPUT);
-  pinMode(bouton2, INPUT);
-  pinMode(bouton3, INPUT);
-  pinMode(bouton4, INPUT);
-  pinMode(bouton5, INPUT);
-  pinMode(bouton6, INPUT);
-  pinMode(buzz, OUTPUT);
+  pinMode(button1, INPUT);
+  pinMode(button2, INPUT);
+  pinMode(button3, INPUT);
+  pinMode(button4, INPUT);
+  pinMode(button5, INPUT);
+//  pinMode(button6, INPUT);
+//  pinMode(buzz, OUTPUT);
 }
 
 void loop(){
-  //attende de pression du bouton
- int lectureBouton();     
-  //Début du jeu
-  boolean gameOver = false; 
-  int presse;
-  int niveau = 0;
-  
-  if( partie3==niveau) {        //La partie N°3 sera la première à jouer  
-        presse = lectureBouton(); ; //Lecture du bouton appuyé par le joueur
-        jouerPartie(presse); //Joue la partie N°3 du joueur
-  else {
-    gameOver = true;
-  };
-  
-  if(presse!=partie[partie3]); //Si la partie est bonne , on continue sinon il ya game over;
-  {
-    gameOver = true;  
-  }
-  if(gameOver){break;}
-  }
-  delay(1000);
-};
  
+  //On lit la broche d'entrée
+  int buttonEtat = digitalRead(button1);
+ 
+  //Si le bouton et pressée
+  if (buttonEtat == 1){
+ 
+    //On parcour les notes de la mélodie
+    for (int thisNote=0; thisNote <12; thisNote++){
+ 
+      int noteDuration = 1500 / noteDurations [thisNote];       //On prend une seconde pour calculer la durée de la note
+      tone(12, melody1 [thisNote], noteDuration);
+ 
+       //On défini un délai minimal entre elles
+      int pauseBetweenNotes = noteDuration * 1.30;   //la durée de la note + 30% semble bien fonctionner
+      delay(pauseBetweenNotes);
+ 
+      //stop music
+      noTone(12);
+    }
+  }
+  /***************************************************************/
+ /*ON DONNE LES MEMES CONDITIONS AU BOUTON 2 COMME POUR LE BOUTON 1*/
+  /**************************************************************/
+   buttonEtat = digitalRead(button2);
+ 
+  if (buttonEtat == 1){
+ 
+    for (int thisNote=0; thisNote <12; thisNote++){
+ 
+      int noteDuration = 1500 / noteDurations [thisNote];      
+      tone(12, melody2 [thisNote], noteDuration);
+ 
+      int pauseBetweenNotes = noteDuration * 1.30;  
+      delay(pauseBetweenNotes);
+ 
+      noTone(12);
+    }
+  }
+  /***************************************************************/
+ /*ON DONNE LES MEMES CONDITIONS AU BOUTON 3 COMME POUR LE BOUTON 1*/
+  /**************************************************************/
+   buttonEtat = digitalRead(button3);
+ 
+  if (buttonEtat == 1){
+ 
+    for (int thisNote=0; thisNote <12; thisNote++){
+ 
+      int noteDuration = 1500 / noteDurations [thisNote];      
+      tone(12, melody3 [thisNote], noteDuration);
+  
+      int pauseBetweenNotes = noteDuration * 1.30; 
+      delay(pauseBetweenNotes);
+ 
+      //stop music
+      noTone(12);
+    }
+  }
+  /***************************************************************/
+ /*ON DONNE LES MEMES CONDITIONS AU BOUTON 4 COMME POUR LE BOUTON 1*/
+  /**************************************************************/
+   buttonEtat = digitalRead(button4);
+ 
+  
+  if (buttonEtat == 1){
+ 
+  
+    for (int thisNote=0; thisNote <12; thisNote++){
+ 
+      int noteDuration = 1500 / noteDurations [thisNote];      
+      tone(12, melody4 [thisNote], noteDuration);
+ 
+       
+      int pauseBetweenNotes = noteDuration * 1.30;   
+      delay(pauseBetweenNotes);
+ 
+      //stop music
+      noTone(12);
+    }
+  }
+  /***************************************************************/
+ /*ON DONNE LES MEMES CONDITIONS AU BOUTON 5 COMME POUR LE BOUTON 1*/
+  /**************************************************************/
+  buttonEtat = digitalRead(button5);
+ 
+
+  if (buttonEtat == 1){
+ 
+   
+    for (int thisNote=0; thisNote <12; thisNote++){
+ 
+      int noteDuration = 1500 / noteDurations [thisNote];      
+      tone(12, melody5 [thisNote], noteDuration);
+ 
+       //On défini un délai minimal entre elles
+      int pauseBetweenNotes = noteDuration * 1.30;   
+      delay(pauseBetweenNotes);
+ 
+      noTone(12);
+    }
+  }
+}
