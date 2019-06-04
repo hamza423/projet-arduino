@@ -1,306 +1,251 @@
 #include "pitches.h"  //On ajoute cet bibliothèque afin d'obtenir les notes
+
+int melody[] = {
+  NOTE_E7, NOTE_E7, 0, NOTE_E7,
+  0, NOTE_C7, NOTE_E7, 0,
+  NOTE_G7, 0, 0,  0,
+  NOTE_G6, 0, 0, 0,
  
-int melody1[]={NOTE_C7, 0, 0, NOTE_G6,            //On définie troisième partie de la musique 
-  0, 0, NOTE_E6, 0,
-  0, NOTE_A6, 0, NOTE_B6,
-  0, NOTE_AS6, NOTE_A6, 0};
-
-  int melody2[] = {NOTE_G6, NOTE_E7, NOTE_G7,         //On définie deuxième partie de la musique 
-  NOTE_A7, 0, NOTE_F7, NOTE_G7,
-  0, NOTE_E7, 0, NOTE_C7,
-  NOTE_D7, NOTE_B6, 0, 0};
-
-  int melody3[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie troisième partie de la musique 
-  0, 0, NOTE_E6, 0,
-  0, NOTE_A6, 0, NOTE_B6,
-  0, NOTE_AS6, NOTE_A6, 0};
-
-
-int melody4[] = {NOTE_G6, NOTE_E7, NOTE_G7,          //On définie quatrième partie de la musique
-  NOTE_A7, 0, NOTE_F7, NOTE_G7,
-  0, NOTE_E7, 0, NOTE_C7,
-  NOTE_D7, NOTE_B6, 0, 0};
-
-
-int melody5[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie cinquième partie de la musique
+  NOTE_C7, 0, 0, NOTE_G6,
   0, 0, NOTE_E6, 0,
   0, NOTE_A6, 0, NOTE_B6,
   0, NOTE_AS6, NOTE_A6, 0,
+ 
+  NOTE_G6, NOTE_E7, NOTE_G7,
+  NOTE_A7, 0, NOTE_F7, NOTE_G7,
+  0, NOTE_E7, 0, NOTE_C7,
+  NOTE_D7, NOTE_B6, 0, 0,
+ 
+  NOTE_C7, 0, 0, NOTE_G6,
+  0, 0, NOTE_E6, 0,
+  0, NOTE_A6, 0, NOTE_B6,
+  0, NOTE_AS6, NOTE_A6, 0,
+ 
+  NOTE_G6, NOTE_E7, NOTE_G7,
+  NOTE_A7, 0, NOTE_F7, NOTE_G7,
+  0, NOTE_E7, 0, NOTE_C7,
+  NOTE_D7, NOTE_B6, 0, 0
 };
 
-int sequence[5] = {1, 2, 3, 4, 5};
+  int noteDurations[]={12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  9, 9, 9,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+ 
+  9, 9, 9,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+  12, 12, 12, 12,
+};
+
+
+/*melody lancement*/
+int son[] = {261, 330, 392 ,466 ,523};
+
+/*Mélody game over*/
+int son1[] = {
+  NOTE_E7, NOTE_E7, 0, NOTE_E7,
+  0, NOTE_C7, NOTE_E7, 0,
+  NOTE_G7, 0, 0,  0,
+  NOTE_G6, 0, 0, 0,};
+  
+int sequence[5];
  
 //On définie les boutons
-int button1= 16;
-int button2= 5;
-int button3= 4;
-int button4= 13;
-int button5= 14;
-//int bouton6 = 6; //bouton validation 
-
-//Durée des notes
-int noteDurations[]={12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
- 
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
- 
-  9, 9, 9,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
- 
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
- 
-  9, 9, 9,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-  12, 12, 12, 12,
-};
+int button1 = 16;
+int button2 = 5;
+int button3 = 4;
+int button4 = 14;
+int button5 = 13;
+int speaker = 12;
  
  
-void setup(){
-  
+void setup()
+{
   Serial.begin(9600);
-  
-  //On définie les entrée et sortie de chaque bouton + le buzzer (INPUT:entrée | OUTPUT:sortie)
+ 
   pinMode(button1, INPUT);
   pinMode(button2, INPUT);
   pinMode(button3, INPUT);
-  pinMode(button3, INPUT);
   pinMode(button4, INPUT);
   pinMode(button5, INPUT);
+  pinMode(speaker, OUTPUT);
 }
+
+//---------------------------------------------------------
+// Boucle principale.
+// La loop tournera jusqu'à extinction ou reset.
+
+void loop()
+{
+  Serial.print("APPUYER SUR UN BOUTON POUR COMMENCER");
  
-void loop(){
+  //Attente de pression sur une touche.
+  lectureBouton();
 
-Serial.print("Debut du jeu");
-delay(5000);
+  //Témoin de lancement du jeu.
+  melodieLancement();
+  delay(2000);
 
- //On lit la broche d'entrée
- int buttonEtat = digitalRead(button1);
- 
- bool gameOver = false;
- int niveau = 0; 
+  //Début du jeu
+  boolean gameOver = false;
+  int presse;
+  int niveau = 0;
+  while(!gameOver)
+  {
+    nouvelleNote(niveau); //Rajoute une note à la séquence.
+    jouerSequence(niveau); //Joue la séquence
 
-    /**************************************************************/
-   /*SI ON APPUIE SUR LE BOUTON N°1 , La mélodie 2 se déclenchera*/
-  /**************************************************************/
-
-  //Si le bouton est pressé
-  if (buttonEtat = digitalRead(button1)){
-      //On parcourt les notes de la mélodie
-    for (int niveau=0; niveau<=5; niveau++){
- 
-      int noteDuration = 1500 / noteDurations [niveau];  //On prend une seconde pour calculer la durée de la note
-      tone(12, melody3 [niveau], noteDuration);
-
-       //On définit un délais minimum entre les notes
-      int pauseEntreNotes = noteDuration * 1.30;      //la durée de la note + 30% semble bien fonctionner
-      delay(pauseEntreNotes);
- 
-      //On stop le morceau
-      noTone(12);
-      Serial.print("bravo , tu passe au niveau 2");
-      delay(3000);
+    for(int i=0; i<=niveau; i++) //Attend que le joueur tape chaque note de la séquence
+    {
+      presse = lectureBouton(); //Lecture du bouton appuyé par le joueur
+      jouerNote(presse); //Joue la note du joueur
+      if(presse!=sequence[i]) //Si la note est bonne, on continue, sinon GameOver
+      {
+        gameOver = true;
+        Serial.print("GAME OVER");
+        melodieGameOver();
       }
+      if(gameOver) {break;}
+    }
+    Serial.print("NIVEAU SUIVANT");
+    niveau++;
+    delay(1000);
   }
-    else if (buttonEtat = digitalRead(button2)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-     delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button3)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button4)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button5)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
+if (niveau<=5) {
+ 
+      int noteDuration = 1000 / noteDurations [niveau];
+      tone(8, melody [niveau], noteDuration);
+      noTone(speaker);
+    Serial.print("BRAVO , VOUS AVEZ RÉUSSI !!"); 
+  }
 }
-  
-    
-   /***************************************************************/
- /*SINON SI ON APPUIE SUR LE BOUTON N°2 , La mélodie 2 se déclenchera*/
-  /**************************************************************/
-  
-   if (buttonEtat = digitalRead(button2)){
-      //On parcourt les notes de la mélodie
-    for (int niveau=1; niveau<=1; niveau++){
- 
-      int noteDuration = 1500 / noteDurations [niveau];  //On prend une seconde pour calculer la durée de la note
-      tone(12, melody3 [niveau], noteDuration);
+//---------------------------------------------------------
+//Fonction de lecture des boutons.
+  //L'arduino vérifie les boutons un par un, mais comme la vitesse d'une vérification
+  //est de l'ordre de la nanoseconde, l'ensemble est presque instantané.
+int lectureBouton()
+{
+  int boutonPresse = 0;
 
-       //On définit un délais minimum entre les notes
-      int pauseEntreNotes = noteDuration * 1.30;      //la durée de la note + 30% semble bien fonctionner
-      delay(pauseEntreNotes);
- 
-      //On stop le morceau
-      noTone(12);
-      Serial.print("bravo , tu passe au niveau 3");
-      delay(3000);
-      }
+  while(!boutonPresse)
+  {
+    if(digitalRead(button1))
+    {
+      boutonPresse = 1;
+    }
+    if(digitalRead(button2))
+    {
+      boutonPresse = 2;
+    }
+    if(digitalRead(button3))
+    {
+      boutonPresse = 3;
+    }
+    if(digitalRead(button4))
+    {
+      boutonPresse = 4;
+    }
+    if(digitalRead(button5))
+    {
+      boutonPresse = 5;
+    }
   }
-    else if (buttonEtat = digitalRead(button1)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button3)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button4)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button5)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-  
-    /***************************************************************/
- /*SINON SI ON APPUIE SUR LE BOUTON N°3 , La mélodie 2 se déclenchera*/
-  /**************************************************************/
-
- if (buttonEtat = digitalRead(button3)){
-      //On parcourt les notes de la mélodie
-    for (int niveau=0; niveau<=2; niveau++){
- 
-      int noteDuration = 1500 / noteDurations [niveau];  //On prend une seconde pour calculer la durée de la note
-      tone(12, melody3 [niveau], noteDuration);
-
-       //On définit un délais minimum entre les notes
-      int pauseEntreNotes = noteDuration * 1.30;      //la durée de la note + 30% semble bien fonctionner
-      delay(pauseEntreNotes);
- 
-      //On stop le morceau
-      noTone(12);
-      Serial.print("bravo , tu passe au niveau 4");
-      delay(1500);
-      }
+  return boutonPresse;
+}
+//---------------------------------------------------------
+//Fonction de lumière qet de son
+void jouerNote(int numero)
+{
+  switch(numero)
+  {
+    case 1:
+      digitalRead(button1);
+      break;
+    case 2:
+      digitalRead(button2);
+      break;
+    case 3:
+      digitalRead(button3);
+      break;
+    case 4:
+      digitalRead(button4);
+      break;
+      case 5:
+      digitalRead(button5);
+      break;
   }
-    else if (buttonEtat = digitalRead(button2)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button1)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button4)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button5)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-  
+  tone(speaker, son[numero-1]); //Le tableau commence à 0 (non à 1)
+  delay(800);
 
-    /***************************************************************/
- /*SINON SI ON APPUIE SUR LE BOUTON N°4 , La mélodie 2 se déclenchera*/
-  /**************************************************************/
- if (buttonEtat = digitalRead(button4)){
-      //On parcourt les notes de la mélodie
-    for (int niveau=0; niveau<=3; niveau++){
- 
-      int noteDuration = 1500 / noteDurations [niveau];  //On prend une seconde pour calculer la durée de la note
-      tone(12, melody4 [niveau], noteDuration);
+  noTone(speaker);
 
-       //On définit un délais minimum entre les notes
-      int pauseEntreNotes = noteDuration * 1.30;      //la durée de la note + 30% semble bien fonctionner
-      delay(pauseEntreNotes);
- 
-      //On stop le morceau
-      noTone(12);
-      Serial.print("bravo , tu passe au niveau suivant");
-      delay(1500);
-      }
+  delay(200);
+}
+
+//---------------------------------------------------------
+//Joue toute la séquence
+void jouerSequence(int niveau)
+{
+  for(int i=0; i<=niveau; i++)
+  {
+    jouerNote(sequence[5]);
   }
-    else if (buttonEtat = digitalRead(button4)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button3)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button1)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button5)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
+}
+//---------------------------------------------------------
+//Nouvelle note aléatoire
+void nouvelleNote(int niveau)
+{
+  sequence[niveau] = (int)random(1,5);
+}
 
-    /***************************************************************/
- /*SINON SI ON APPUIE SUR LE BOUTON N°5 , La mélodie 2 se déclenchera*/
-  /**************************************************************/
+//---------------------------------------------------------
+//Témoin lancement (petite séquence)
+void melodieLancement()
+{
+  tone(speaker, son[0]);
+  delay(300);
+  tone(speaker, son[1]);
+  delay(300);
+  tone(speaker, son[2]);
+  delay(300);
+  tone(speaker, son[3]);
+  delay(300);
+  tone(speaker, son[4]);
+  delay(300);
+  noTone(speaker);
+}
 
- if (buttonEtat = digitalRead(button5)){
-      //On parcourt les notes de la mélodie
-    for (int niveau=0; niveau<=4; niveau++){
- 
-      int noteDuration = 1500 / noteDurations [niveau];  //On prend une seconde pour calculer la durée de la note
-      tone(12, melody3 [niveau], noteDuration);
-
-       //On définit un délais minimum entre les notes
-      int pauseEntreNotes = noteDuration * 1.30;      //la durée de la note + 30% semble bien fonctionner
-      delay(pauseEntreNotes);
- 
-      //On stop le morceau
-      noTone(12);
-      Serial.print("bravo , tu as terminer la musique youpi");
-      delay(1500);
-      niveau+1;
-      }
-  }
-  
-    else if (buttonEtat = digitalRead(button5)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }  
-    else if (buttonEtat = digitalRead(button3)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
-    else if (buttonEtat = digitalRead(button4)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }   
-    else if (buttonEtat = digitalRead(button1)) {
-    gameOver=true;
-    Serial.print("Mauvais boutton");
-    delay(2000);
-    }
- }
+//---------------------------------------------------------
+//Témoin Game Over
+void melodieGameOver()
+{
+  tone(speaker, son[4]);
+  delay(150);
+  tone(speaker, son[3]);
+  delay(150);
+  delay(150);
+  tone(speaker, son[2]);
+  delay(150);
+  tone(speaker, son[1]);
+  delay(150);
+  tone(speaker, son[0]);
+  delay(150);
+  delay(500);
+  noTone(speaker);
+}
