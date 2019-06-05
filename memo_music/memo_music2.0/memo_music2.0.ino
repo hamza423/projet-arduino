@@ -1,33 +1,34 @@
 #include "pitches.h"  //On ajoute cet bibliothèque afin d'obtenir les notes
 
-int melody[] = {
-  NOTE_E7, NOTE_E7, 0, NOTE_E7,
-  0, NOTE_C7, NOTE_E7, 0,
-  NOTE_G7, 0, 0,  0,
-  NOTE_G6, 0, 0, 0,
- 
-  NOTE_C7, 0, 0, NOTE_G6,
+int melody1[]={NOTE_C7, 0, 0, NOTE_G6,            //On définie troisième partie de la musique 
+  0, 0, NOTE_E6, 0,
+  0, NOTE_A6, 0, NOTE_B6,
+  0, NOTE_AS6, NOTE_A6, 0};
+
+  int melody2[] = {NOTE_G6, NOTE_E7, NOTE_G7,         //On définie deuxième partie de la musique 
+  NOTE_A7, 0, NOTE_F7, NOTE_G7,
+  0, NOTE_E7, 0, NOTE_C7,
+  NOTE_D7, NOTE_B6, 0, 0};
+
+  int melody3[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie troisième partie de la musique 
+  0, 0, NOTE_E6, 0,
+  0, NOTE_A6, 0, NOTE_B6,
+  0, NOTE_AS6, NOTE_A6, 0};
+
+
+int melody4[] = {NOTE_G6, NOTE_E7, NOTE_G7,          //On définie quatrième partie de la musique
+  NOTE_A7, 0, NOTE_F7, NOTE_G7,
+  0, NOTE_E7, 0, NOTE_C7,
+  NOTE_D7, NOTE_B6, 0, 0};
+
+
+int melody5[] = {NOTE_C7, 0, 0, NOTE_G6,            //On définie cinquième partie de la musique
   0, 0, NOTE_E6, 0,
   0, NOTE_A6, 0, NOTE_B6,
   0, NOTE_AS6, NOTE_A6, 0,
- 
-  NOTE_G6, NOTE_E7, NOTE_G7,
-  NOTE_A7, 0, NOTE_F7, NOTE_G7,
-  0, NOTE_E7, 0, NOTE_C7,
-  NOTE_D7, NOTE_B6, 0, 0,
- 
-  NOTE_C7, 0, 0, NOTE_G6,
-  0, 0, NOTE_E6, 0,
-  0, NOTE_A6, 0, NOTE_B6,
-  0, NOTE_AS6, NOTE_A6, 0,
- 
-  NOTE_G6, NOTE_E7, NOTE_G7,
-  NOTE_A7, 0, NOTE_F7, NOTE_G7,
-  0, NOTE_E7, 0, NOTE_C7,
-  NOTE_D7, NOTE_B6, 0, 0
 };
 
-  int noteDurations[]={12, 12, 12, 12,
+int noteDurations[]={12, 12, 12, 12,
   12, 12, 12, 12,
   12, 12, 12, 12,
   12, 12, 12, 12,
@@ -55,7 +56,7 @@ int melody[] = {
 
 
 /*melody lancement*/
-int son[] = {261, 330, 392 ,466 ,523};
+int son[] = {261, 330, 392, 523};
 
 /*Mélody game over*/
 int son1[] = {
@@ -64,26 +65,29 @@ int son1[] = {
   NOTE_G7, 0, 0,  0,
   NOTE_G6, 0, 0, 0,};
   
-int sequence[5];
+int sequence[5] = {1, 2, 3, 4, 5};
  
 //On définie les boutons
 int button1 = 16;
 int button2 = 5;
 int button3 = 4;
-int button4 = 14;
-int button5 = 13;
+int button4 = 13;
+int button5 = 14;
+//int bouton6 = 6; //bouton validation 
 int speaker = 12;
+
+//Durée des notes
  
  
 void setup()
 {
+
   Serial.begin(9600);
  
   pinMode(button1, INPUT);
   pinMode(button2, INPUT);
   pinMode(button3, INPUT);
   pinMode(button4, INPUT);
-  pinMode(button5, INPUT);
   pinMode(speaker, OUTPUT);
 }
 
@@ -93,8 +97,8 @@ void setup()
 
 void loop()
 {
-  Serial.print("APPUYER SUR UN BOUTON POUR COMMENCER");
- 
+   Serial.print("Appuyer sur le bouton 1 pout commencer");
+   
   //Attente de pression sur une touche.
   lectureBouton();
 
@@ -108,7 +112,6 @@ void loop()
   int niveau = 0;
   while(!gameOver)
   {
-    nouvelleNote(niveau); //Rajoute une note à la séquence.
     jouerSequence(niveau); //Joue la séquence
 
     for(int i=0; i<=niveau; i++) //Attend que le joueur tape chaque note de la séquence
@@ -118,23 +121,15 @@ void loop()
       if(presse!=sequence[i]) //Si la note est bonne, on continue, sinon GameOver
       {
         gameOver = true;
-        Serial.print("GAME OVER");
         melodieGameOver();
       }
       if(gameOver) {break;}
     }
-    Serial.print("NIVEAU SUIVANT");
     niveau++;
     delay(1000);
   }
-if (niveau<=5) {
- 
-      int noteDuration = 1000 / noteDurations [niveau];
-      tone(8, melody [niveau], noteDuration);
-      noTone(speaker);
-    Serial.print("BRAVO , VOUS AVEZ RÉUSSI !!"); 
-  }
 }
+
 //---------------------------------------------------------
 //Fonction de lecture des boutons.
   //L'arduino vérifie les boutons un par un, mais comme la vitesse d'une vérification
@@ -161,33 +156,26 @@ int lectureBouton()
     {
       boutonPresse = 4;
     }
-    if(digitalRead(button5))
-    {
-      boutonPresse = 5;
-    }
   }
   return boutonPresse;
 }
 //---------------------------------------------------------
-//Fonction de lumière qet de son
+//Fonction de son
 void jouerNote(int numero)
 {
   switch(numero)
   {
     case 1:
-      digitalRead(button1);
+     button1;
       break;
     case 2:
-      digitalRead(button2);
+     button2;
       break;
     case 3:
-      digitalRead(button3);
+     button3;
       break;
     case 4:
-      digitalRead(button4);
-      break;
-      case 5:
-      digitalRead(button5);
+     button4;
       break;
   }
   tone(speaker, son[numero-1]); //Le tableau commence à 0 (non à 1)
@@ -204,29 +192,21 @@ void jouerSequence(int niveau)
 {
   for(int i=0; i<=niveau; i++)
   {
-    jouerNote(sequence[5]);
+    jouerNote(sequence[i]);
   }
 }
 //---------------------------------------------------------
-//Nouvelle note aléatoire
-void nouvelleNote(int niveau)
-{
-  sequence[niveau] = (int)random(1,5);
-}
-
-//---------------------------------------------------------
-//Témoin lancement (petite séquence)
+//Témoin lancement (petite séquence lumineuse)
 void melodieLancement()
 {
-  tone(speaker, son[0]);
+ 
+   tone(speaker,son[0]);
   delay(300);
   tone(speaker, son[1]);
   delay(300);
   tone(speaker, son[2]);
   delay(300);
   tone(speaker, son[3]);
-  delay(300);
-  tone(speaker, son[4]);
   delay(300);
   noTone(speaker);
 }
@@ -235,16 +215,23 @@ void melodieLancement()
 //Témoin Game Over
 void melodieGameOver()
 {
-  tone(speaker, son[4]);
-  delay(150);
-  tone(speaker, son[3]);
+ 
+  tone(speaker, son[1]);
   delay(150);
   delay(150);
   tone(speaker, son[2]);
   delay(150);
-  tone(speaker, son[1]);
+  tone(speaker, son[3]);
   delay(150);
-  tone(speaker, son[0]);
+  tone(speaker, son[4]);
+  delay(150);
+  tone(speaker, son[5]);
+  delay(150);
+  tone(speaker, son[6]);
+  delay(150);
+  tone(speaker, son[7]);
+  delay(150);
+  tone(speaker, son[8]);
   delay(150);
   delay(500);
   noTone(speaker);
