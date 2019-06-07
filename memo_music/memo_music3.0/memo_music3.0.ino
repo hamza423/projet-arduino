@@ -1,3 +1,7 @@
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 #include "pitches.h"  //On ajoute cet bibliothèque afin d'obtenir les notes
 
 int mario[] = 
@@ -69,8 +73,8 @@ int sequence[5] = {1, 2, 3, 4, 5};
  
 //On définie les boutons
 int button1 = 16;
-int button2 = 5;
-int button3 = 4;
+int button2 = 0;
+int button3 = 2;
 int button4 = 14;
 int button5 = 13;
 int speaker = 12;
@@ -91,23 +95,23 @@ int lectureBouton()
 
   if(boutonPresse=-1)
   {
-    if(digitalRead(button1))
+    if(!digitalRead(button1))
     {
       boutonPresse = 2;
     }
-    if(digitalRead(button2))
+    if(!digitalRead(button2))
     {
       boutonPresse = 4;
     }
-    if(digitalRead(button3))
+    if(!digitalRead(button3))
     {
       boutonPresse = 1;
     }
-    if(digitalRead(button4))
+    if(!digitalRead(button4))
     {
       boutonPresse = 5;
     }
-    if(digitalRead(button5))
+    if(!digitalRead(button5))
     {
       boutonPresse = 3;
     }
@@ -184,7 +188,9 @@ void melodieGameOver()
 
 void setup()
 {
-
+  lcd.init(); 
+  lcd.backlight();
+  
   Serial.begin(9600);
  
   pinMode(button1, INPUT);
@@ -200,37 +206,36 @@ void setup()
 // Boucle principale.
 // La loop tournera jusqu'à extinction ou reset.
 
-void loop()
-{
-     
-    if(digitalRead(button1))
+void loop(){
+       
+    if(!digitalRead(button1))
     {
       presse = 2;
       presseornot=1;
     }
-    if(digitalRead(button2))
+    if(!digitalRead(button2))
     {
       presse = 4;
       presseornot=1;
     }
-    if(digitalRead(button3))
+    if(!digitalRead(button3))
     {
       presse = 1;
       presseornot=1;
     }
-    if(digitalRead(button4))
+    if(!digitalRead(button4))
     {
       presse = 5;
       presseornot=1;
     }
-    if(digitalRead(button5))
+    if(!digitalRead(button5))
     {
       presse = 3;
       presseornot=1;
     }
    
   if(gameOver==0){
-    Serial.println("ALLEZ-Y");
+    lcd.print("ALLEZ-Y");
     melodieLancement();
     gameOver = 1   ;
     
@@ -249,8 +254,6 @@ void loop()
   
   if(gameOver==2)
   {
-  Serial.println(presse);
-  Serial.println(sequence[i]);
     
     if (presseornot==1){
       jouerNote(presse);
@@ -260,7 +263,7 @@ void loop()
       if(presse!=sequence[i]) //Si la note est bonne, on continue, sinon GameOver
       {
         gameOver = 0;
-        Serial.println("GAME OVER");
+        lcd.print("GAME OVER");
         melodieGameOver();
         i=0;
       }
@@ -268,20 +271,20 @@ void loop()
         i++;
         }
       }
-
       else
       {
-   for (int thisNote=0; thisNote <12; thisNote++){
+ for (int thisNote=0; thisNote <12; thisNote++){
 
       int noteDuration = 1500 / noteDurations [thisNote];
       tone(12, mario [thisNote], noteDuration);
 
-      int pauseBetweenNotes = noteDuration * 1.30;
-      delay(pauseBetweenNotes);
-
+      int pauseEntreNotes = noteDuration * 1.30;
+      delay(pauseEntreNotes);
       noTone(12);
     }
-     Serial.print("BRAVO , VOUS AVEZ RÉUSSI !!"); 
+     lcd.print("BRAVO , VOUS AVEZ RÉUSSI !!");
+     delay(1000); 
+     lcd.clear();
      gameOver= 0;
      i=0;
     }
@@ -290,4 +293,3 @@ void loop()
     }
   }
 }
-   
