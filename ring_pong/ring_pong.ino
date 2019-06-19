@@ -1,8 +1,11 @@
 #include <Adafruit_NeoPixel.h> //utilisation de la bibliothèque pour l'anneau du neopixel
+#include <LiquidCrystal_I2C.h>
+  
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 #define RING_PIN D7      //PIN qui permet de controler le l'anneau du neopixel
-#define button0_PIN D1   //permet de controler le bouton de gauche
-#define button1_PIN D0   //permet de controler le bouton de droite
+#define button0_PIN D6 //permet de controler le bouton de gauche
+#define button1_PIN D5   //permet de controler le bouton de droite
 #define num_LED 24      //nombre de led sur l'anneau
 
 
@@ -29,6 +32,13 @@ unsigned long timer;       //Timer utilisée pour accélérer le jeu
  *************************************************************************/
  
 void setup() {
+
+  lcd.init(); 
+  lcd.backlight(); 
+  Serial.begin(9600);
+
+     lcd.print("ALLEZ Y");
+    lcd.setCursor(0, 0);
   
   pinMode(button0_PIN, INPUT_PULLUP); //Utilisation de l'option pullup 
   pinMode(button1_PIN, INPUT_PULLUP);
@@ -36,11 +46,10 @@ void setup() {
   ring.begin();
 
   randomSeed(analogRead(A0));   //Création d'une couleur aléatoire 
-  color = ring.Color(random(20, 100), random(20, 100), random(20, 100));
+  color = ring.Color(random(18546145), random(18546145), random(18546145));
   
   ring_blink(color, 500, 2);  //Début de l'animation
 }
-
 
 /**************************************************************************
  * LOOP
@@ -67,13 +76,13 @@ void loop() {
     if(!digitalRead(button0_PIN)){
       game_ON = 1;
       player = !player;
-      normal = 100;
+      normal = 50;
       game_speed = normal;
       delay(1000);
       timer = millis();
     }
-    
   }
+  
 //Sinon si le joueur 1 est sélectionné on initialise le jeu
   else if(!game_ON && player == 1){
     k=ring.numPixels()-5;
@@ -93,20 +102,23 @@ void loop() {
     if(!digitalRead(button1_PIN)){
       game_ON = 1;
       player = !player;
-      normal = 100;
+      normal = 50;
       game_speed = normal;
       delay(1000);
       timer = millis();
     }
   }
 
-//On met à jour l'affichage
+//On met à jour l'anneau
   else{
       comete(k,0,50,75); 
     
     ring.setPixelColor(3,0,100,0);
     ring.setPixelColor(ring.numPixels()-4,0,100,0);
 
+/****************************************************/
+//PARAMÈTRE JOUEUR DROITE
+/***************************************************/
 //Si le joueur de droite joue
     if(player == 1){
 
@@ -135,10 +147,21 @@ void loop() {
           game_speed = normal*0.75;   //vitesse de l'engagement
           ring_blink(color,150,2);   //clignotement de l'anneau
           show_none();              // anneau éteint
+                   
+          lcd.setCursor(0, 0);
+          lcd.print("Joueur gauche :");
+          lcd.print(String(point_playerG)+" points");
+          
+          lcd.setCursor(0, 1);
+          lcd.print("Joueur droite :");
+          lcd.print(String(point_playerD)+" points");
         }
       }
     }
 
+/****************************************************/
+//PARAMÈTRE JOUEUR GAUCHE
+/***************************************************/
 //Si le joueur de gauche à appuyer
     if(player == 0){ //Si c est au joureur 1
 
@@ -162,12 +185,22 @@ void loop() {
           game_ON = 0;                   //Game OFF
           point_playerD ++;             //+ 1pt pour le joueur de droite
           player = !player;            //Changement de joueur
-          game_speed = normal*0.75;   //Vitesse de l'engagement
+          game_speed = normal*2.00;   //Vitesse de l'engagement
           ring_blink(color,150,2);   //Clignotement de l'anneau
           show_none();              //Anneau éteint
+
+          lcd.setCursor(0, 0);
+          lcd.print("Joueur gauche :");
+          lcd.print(String(point_playerG)+" points");
+          
+          
+          lcd.setCursor(0, 1);
+          lcd.print("Joueur droite :");
+          lcd.print(String(point_playerD)+" points");
         }
       }
     }
+
 
  //Mouvement de la balle 
     if(!dir){
@@ -182,6 +215,14 @@ void loop() {
         k=4;
         ring_blink(color,150,2);
         show_none();
+
+                lcd.setCursor(0, 0);
+        lcd.print("Joueur gauche :");
+        lcd.print(String(point_playerG)+" points");
+        
+        lcd.setCursor(0, 1);
+        lcd.print("Joueur droite :");
+        lcd.print(String(point_playerD)+" points");
       }
     }
     else {
@@ -196,12 +237,20 @@ void loop() {
         k=ring.numPixels()-5;
         ring_blink(color,150,2);
         show_none();
+
+                lcd.setCursor(0, 0);
+        lcd.print("Joueur gauche :");
+        lcd.print(String(point_playerG)+" points");
+        
+        lcd.setCursor(0, 1);
+        lcd.print("Joueur droite :");
+        lcd.print(String(point_playerD)+" points");
       }
     }
   }
 
 // Fin du jeu si l'un des joueurs à plus de 3 points
-  if (point_playerG>3 || point_playerD>3){
+  if (point_playerG>3 ){
     ring_blink(color,150,5);
     game_ON = 0;
     player = 0;
@@ -210,6 +259,22 @@ void loop() {
     game_speed = 100;
     k=4;
     dir = 0;
+   lcd.clear(); 
+   lcd.print("Joueur G gagne");
+ }
+
+ else if (point_playerD>3){
+    ring_blink(color,150,5);
+    game_ON = 0;
+    player = 0;
+    point_playerG=0;
+    point_playerD=0;
+    game_speed = 100;
+    k=4;
+    dir = 0;
+    
+    lcd.clear();
+    lcd.print("Joueur D gagne");
  }
 
 //Accélération du jeu
