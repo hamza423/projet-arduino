@@ -1,15 +1,24 @@
-#include <Adafruit_NeoPixel.h>
-#define led_rouge 6  
-#define BT_PIN_ROUGE 8 
+#include <Adafruit_NeoPixel.h>        //bibliothèque adafruit pour le neopixel ws2812
 
-#define NB_ROUGE 50
+#define led_PIN 4                     //
+
+#define BT_PIN_ROUGE 8 
+#define BT_PIN_VERT 7 
+//#define BT_PIN_JAUNE 6 
+//#define BT_PIN_BLEU 5
+
+#define NB_LED 50
 
 #define rouge 0xFF0000
 
 int button_compteur;
 int buttonStateRouge;
+//int buttonStateVert;
+//int buttonStateJaune;
+//int buttonStateBleu;
 
-Adafruit_NeoPixel strip(NB_ROUGE, led_rouge, NEO_GRB + NEO_KHZ800);
+
+Adafruit_NeoPixel strip(NB_LED, led_PIN, NEO_GRB + NEO_KHZ800);
 
 
 void setup()
@@ -19,13 +28,14 @@ void setup()
   strip.begin();
   strip.clear();
   buttonStateRouge = 0;
+  //buttonStateVert = 0;
 }
 
 void loop()
 {
- int v = !digitalRead(BT_PIN_ROUGE);
+ int button_rouge = !digitalRead(BT_PIN_ROUGE);
   Serial.println(button_compteur,DEC);
-   if(v){  
+   if(button_rouge){  
      if(!buttonStateRouge){
          buttonStateRouge = 1; 
          button_compteur++;
@@ -40,7 +50,8 @@ void loop()
      strip.setPixelColor(button_compteur-1, strip.Color(0, 0, 0));
  strip.show();
 
-  if(button_compteur > NB_ROUGE){
+  if(button_compteur > NB_LED){
      button_compteur = 0; 
+   
    }
 }
