@@ -46,7 +46,7 @@ void setup() {
   ring.begin();
 
   randomSeed(analogRead(A0));   //Création d'une couleur aléatoire 
-  color = ring.Color(random(18546145), random(18546145), random(18546145));
+  color = ring.Color(random(922277), random(922277), random(922277));
   
   ring_blink(color, 500, 2);  //Début de l'animation
 }
