@@ -2,11 +2,11 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-int led_milieu=2;             // Broche de la LED du milieu
-int led_droite=13;            // Broche de la LED de droite
-int led_gauche=15;          // Broche de la LED de gauche
-int equipe_droite=0;       // Variable => On stocke la valeur (Read) du Score à 0 pour l'équipe de droite
-int equipe_gauche=0;      // Variable => On stocke la valeur (Read) du Score à 0 pour l'équipe  de gauche
+int led_milieu=2;             // Connecter la LED jaune au GPIO2 (ou D4): signal lumineux au milieu pour le start 
+int led_droite=13;            // Connecter la LED rouge au GPIO13 (ou D7): pour détecter la victoire de l'équipe de droite
+int led_gauche=15;          // Connecter la LED bleue au GPIO15 (ou D8): pour détecter la victoire de l'équipe de gauche
+int equipe_droite=0;       // Variable => Pour stocker la valeur lue (Read) du Score à 0 pour l'équipe de droite
+int equipe_gauche=0;      // Variable => Pour stocker la valeur lue (Read) du Score à 0 pour l'équipe  de gauche
 
 void setup() {
       // On initilaise le LCD pour .....
@@ -18,8 +18,8 @@ void setup() {
   pinMode(led_droite, OUTPUT);        
   pinMode(led_gauche, OUTPUT);
         //On définit les boutons comme des entrées
-  pinMode(12, INPUT);                
-  pinMode(14,  INPUT);;
+  pinMode(12, INPUT);   // Connecter le bouton de l'équipe rouge au GPIO12 (ou D): pour détecter la victoire de l'équipe de droite             
+  pinMode(14,  INPUT);; // Connecter le bouton de l'équipe bleue au GPIO14 (ou D5): pour détecter la victoire de l'équipe de gauche
 }
 
 void loop() {
