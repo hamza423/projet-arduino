@@ -1,26 +1,32 @@
-#include <Servo.h>       //bibliothèque pour le servo-motor s90
-  
-Servo servo1;                  //On déclare nos deux servo moteur , un pour horizontale et l'autre pour le vertical
-Servo servo2;
+#include <Servo.h>
 
-#define pin_X A0                   //pin du joystick horizontal "VRx"
-#define pin_Y A1                   //pin joystick vertical "VRy"
+Servo servoX;
+Servo servoY;
+int joyX = A0;
+int joyY = A1;
+int val1 = 0;
+int val2 = 0;
 
-
-
-int val;
-int pos = 0;  
-void setup() 
-{
-  servo1.attach(8);           //On "attache" le servo n°1 a la broche 8 
-  servo2.attach(9);          //On "attache" le servo n°2 a la broche 9
+void setup() {
+  servoX.attach(9);
+  servoY.attach(10);
+  pinMode (joyX, INPUT);
+  pinMode (joyY, INPUT);
+  Serial.begin(9600);
 }
-  
+
 void loop() {
- for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    servo1.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
+  val1 = analogRead(joyX);
+  if (val1 <= 513) {
+    val1 = map(val1, 0, 1023, 70, 110);
   }
-  
+  else {
+    val1 = map(val1, 0, 1023, 60, 120);
+  }
+  servoX.write(val1);
+  val2 = analogRead(joyY);
+  val2 = map(val2, 0, 1023, 75, 105);
+  servoY.write(val2);
+  delay(15);
+
 }

@@ -2,6 +2,8 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+int buttonG = 12; 
+int buttonD = 14;
 int led_milieu=2;             // Broche de la LED du milieu
 int led_droite=13;            // Broche de la LED de droite
 int led_gauche=15;          // Broche de la LED de gauche
