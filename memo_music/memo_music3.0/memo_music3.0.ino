@@ -282,7 +282,7 @@ void loop(){
       delay(pauseEntreNotes);
       noTone(12);
     }
-     lcd.print("BRAVO , VOUS AVEZ RÉUSSI !!");
+     lcd.print("BRAVO");
      delay(1000); 
      lcd.clear();
      gameOver= 0;
