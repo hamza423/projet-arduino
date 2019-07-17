@@ -10,7 +10,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(num_LED, RING_PIN, NEO_GRB + NEO_KHZ800);      // num_LED : On va déclarer nos objet connécter à l'anneau
-                                                                                         // RING_PIN : Nombre de pin sur l'aneau
+                                                                                         // RING_PIN : Nombre de pin sur l'anneau
                                                                                          //NEO_GRB : Les pixels sont câblés pour le flux binaire GRB (la plupart des produits NeoPixel)
                                                                                          //NEO_KHZ800 : Flux binaire 800 KHz (la plupart des produits NeoPixel avec LEDs WS2812)
                                                                                         
@@ -238,7 +238,7 @@ void loop() {
         ring_blink(color,150,2);
         show_none();
 
-                lcd.setCursor(0, 0);
+        lcd.setCursor(0, 0);
         lcd.print("Joueur gauche :");
         lcd.print(String(point_playerG)+" points");
         

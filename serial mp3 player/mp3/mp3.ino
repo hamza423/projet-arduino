@@ -11,31 +11,22 @@ static int8_t Send_buf[8] = {0} ;
 #define PREV_SONG 0X02 
 
 #define CMD_PLAY_W_INDEX 0X03 
-
 #define VOLUME_UP_ONE 0X04
 #define VOLUME_DOWN_ONE 0X05
 #define CMD_SET_VOLUME 0X06
 #define SET_DAC 0X17
 #define CMD_PLAY_WITHVOLUME 0X22 
-
 #define CMD_SEL_DEV 0X09 
-#define DEV_TF 0X02 
-                
+#define DEV_TF 0X02         
 #define SLEEP_MODE_START 0X0A
 #define SLEEP_MODE_WAKEUP 0X0B
-
 #define CMD_RESET 0X0C
 #define CMD_PLAY 0X0D 
 #define CMD_PAUSE 0X0E 
-
 #define CMD_PLAY_WITHFOLDER 0X0F
-
-#define STOP_PLAY 0X16
-
+#define STOP_PLAY 0X1
 #define PLAY_FOLDER 0X17
-
 #define SET_CYCLEPLAY 0X19
-
 #define SET_DAC 0X17
 
 
