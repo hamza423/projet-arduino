@@ -3,11 +3,11 @@
 #define ARDUINO_RX 10 // TX - Arduino RX
 #define ARDUINO_TX 11 // RX - Arduino TX
 
-#define BUTTON_PREV 2
-#define BUTTON_PAUSE 3
-#define BUTTON_NEXT 4
-#define BUTTON_VOL_DOWN 8
-#define BUTTON_VOL_UP 9
+#define BUTTON_PREV 2                   //On défini le bouton précédent
+#define BUTTON_PAUSE 3                 //On défini le bouton pause
+#define BUTTON_NEXT 4                 //On défini le bouton suivant 
+#define BUTTON_VOL_DOWN 8            //On défini le bouton pour augmenter le volume
+#define BUTTON_VOL_UP 9œ            //On défini le bouton pour baisser le volume
 /************COMMANDE POUR OCTET**************************/
 
 #define CMD_NEXT_SONG 0X01
@@ -37,10 +37,10 @@
 
 /*********************************************************/
 
-SoftwareSerial mySerial(ARDUINO_RX, ARDUINO_TX);
+SoftwareSerial mySerial(ARDUINO_RX, ARDUINO_TX);        //On initialise nos PIN RX(10) et TX(11)
 
-unsigned char playmode = CMD_PLAY; 
-char Send_buf[8] = {0} ;
+char playmode = CMD_PLAY;                              //
+char Send_buf[8] = {0};
 
 void setup() 
 {
@@ -63,7 +63,7 @@ void setup()
   Send_buf[4] = 0x00;
   Send_buf[7] = 0xef;
   
-  sendCommand(CMD_SEL_DEV, DEV_TF);    
+  sendCommand(CMD_SEL_DEV, DEV_TF);    //On séléctionne la carte SD
   delay(200);
   sendCommand(CMD_PLAY_W_VOL, 0X0F01);
 }
@@ -83,6 +83,14 @@ void loop()
   {
     play_prev();
   }
+  /*if (digitalRead(BUTTON_VOL_UP))
+  {
+    volum_up();
+  }
+    if (digitalRead(BUTTON_VOL_DOWN))
+  {
+    volum_down();
+  }*/
 }
 
 void sendCommand(int8_t command, int16_t dat)
@@ -133,3 +141,21 @@ void play_prev()
     sendCommand(CMD_PLAY, 0);
   }
 }
+
+/*void volum_up()
+ {
+  sendCommand(CMD_VOLUME_UP, 0);
+  if (playmode == CMD_VOLUME_UP)
+  {
+    sendCommand(CMD_VOLUME_UP, 0);
+  }
+ }
+
+void volum_down()
+ {
+  sendCommand(CMD_VOLUME_DOWN, 0);
+  if (playmode == CMD_VOLUME_DOWN)
+  {
+    sendCommand(CMD_VOLUME_DOWN,0 );
+  }
+ }*/
