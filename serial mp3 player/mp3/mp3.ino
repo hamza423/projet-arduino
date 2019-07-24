@@ -1,13 +1,16 @@
 #include <SoftwareSerial.h>         //On inclus la bibliothèque SoftwareSerial.h 
+#include <ESP8266WiFi.h>           
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
 
-#define ARDUINO_RX 10 // TX - Arduino RX
-#define ARDUINO_TX 11 // RX - Arduino TX
+#define ARDUINO_RX 4 // TX - Arduino RX
+#define ARDUINO_TX 5 // RX - Arduino TX
 
-#define BUTTON_PREV 2                   //On défini le bouton précédent
-#define BUTTON_PAUSE 3                 //On défini le bouton pause
-#define BUTTON_NEXT 4                 //On défini le bouton suivant 
-#define BUTTON_VOL_DOWN 8            //On défini le bouton pour augmenter le volume
-#define BUTTON_VOL_UP 9œ            //On défini le bouton pour baisser le volume
+#define BUTTON_PREV   D5                 //On défini le bouton précédent
+#define BUTTON_PAUSE  D6                //On défini le bouton pause
+#define BUTTON_NEXT   D7               //On défini le bouton suivant 
+#define BUTTON_VOL_DOWN 14          //On défini le bouton pour augmenter le volume
+#define BUTTON_VOL_UP 12
 /************COMMANDE POUR OCTET**************************/
 
 #define CMD_NEXT_SONG 0X01
@@ -37,67 +40,121 @@
 
 /*********************************************************/
 
-SoftwareSerial mySerial(ARDUINO_RX, ARDUINO_TX);        //On initialise nos PIN RX(10) et TX(11)
+SoftwareSerial mySerial(ARDUINO_RX, ARDUINO_TX);
+const char* ssid = "ZOOMACOM";
+const char* password = "z00m@COM";
 
-char playmode = CMD_PLAY;                              //
-char Send_buf[8] = {0};
+ESP8266WebServer server(80);
+
+char playmode = CMD_PLAY; 
+char Send_buf[8] = {0};           //Contient la partie fixe de la commande(command) + l'emplacement de la partie variable 
+String page = "";                 //On défini page avec un String comme type de donner afin de stocker notre page web 
 
 void setup() 
 {
+  Serial.begin(115200);           // Ouverture du port serie en 115200 baud pour envoyer des messages de debug à l'ide par exemple
+  delay(10);
+  mySerial.begin(9600);
+  
   pinMode(BUTTON_PAUSE, INPUT);
   digitalWrite(BUTTON_PAUSE,HIGH);
-  
   pinMode(BUTTON_NEXT, INPUT);
   digitalWrite(BUTTON_NEXT,HIGH);
-  
   pinMode(BUTTON_PREV, INPUT);
   digitalWrite(BUTTON_PREV,HIGH);
 
-  Serial.begin(9600);
-  mySerial.begin(9600);
-  delay(500);
+  Serial.print("connexion à ");       // Connexion au réseau WiFi
+  Serial.println(ssid);
 
+ String page =  "<DOCTYPE html>";
+        page += "<html>";
+        page += "<head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"></head>";
+        page += "<body><style> body { background-color: #fffff; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }</style>";
+        page += "<h1>Serial Mp3 Player</h1>";
+        page += "<p><a href=\"precedent">"<button type="button" class="btn btn-primary">Piste Précedent</button></a>";
+        page += "<a href=\"play">"<button type="button" class="btn btn-primary">Play</button></a>";
+        page += "<a href=\"suivant">"<button type="button" class="btn btn-primary">Piste Suivant</button></a></p>";
+        page += "</body>";
+        page += "</html>";
+  WiFi.begin(ssid, password);         // On se connecte a reseau WiFi avec le SSID et le mot de passe precedemment configure
+
+   while (WiFi.status() == WL_CONNECTED) // On sort de la boucle uniquement lorsque la connexion a ete etablie.
+   {            
+   delay(500);
+   Serial.print(".");
+   }
+   
+   Serial.println("");
+   Serial.println("WiFi connecté");
+
+    
+  server.begin();         // connexion OK, on demarre le server web 
+  Serial.println("Serveur démarré");
+
+
+  Serial.println(WiFi.localIP());     // On indique sur le port serie l'adresse ip de l'ESP pour le trouver facilement
+}
+  
+  server.on("/precedent", [](){                 //On déclare la route pour le bouton precedent 
+  server.send(200, "text/html", page);
+  play_prev();
+  });
+  server.on("/play", [](){                     //On déclare la route pour le bouton play et pause 
+  server.send(200, "text/html", page);
+  play_or_pause();
+  });
+  server.on("/suivant", [](){                   //On déclare la route pour le bouton play et suivant 
+  server.send(200, "text/html", page);
+  play_next();
+  });
+
+  server.begin();         // connexion OK, on demarre le server web
+  
   Send_buf[0] = 0x7e;
   Send_buf[1] = 0xff;
-  Send_buf[2] = 0x06; 
+  Send_buf[2] = 0x06;                     //La partie des variable stocker dans le tableau
   Send_buf[4] = 0x00;
   Send_buf[7] = 0xef;
   
   sendCommand(CMD_SEL_DEV, DEV_TF);    //On séléctionne la carte SD
   delay(200);
-  sendCommand(CMD_PLAY_W_VOL, 0X0F01);
+  sendCommand(CMD_PLAY_W_VOL, 0X1901); // initialise le volume au départ
+
+  Serial.println("test");
 }
 
-
-void loop() 
+void loop(void) 
 { 
-  if (digitalRead(BUTTON_PAUSE))
+  server.handleClient();      
+  
+  if (digitalRead(BUTTON_PAUSE))                //reconnaissance de l'appuie sur le bouton et activation de la fonction play_or_pause
   {
-    play_or_pause();  
+    play_or_pause(); 
+    Serial.println("pause"); 
   }
-  if (digitalRead(BUTTON_NEXT))
+  if (digitalRead(BUTTON_NEXT))                 //reconnaissance de l'appuie sur le bouton et activation de la fonction play_next
   {
     play_next();
   }
-  if (digitalRead(BUTTON_PREV))
+  if (digitalRead(BUTTON_PREV))                 //reconnaissance de l'appuie sur le bouton et activation de la fonction play_prev
   {
     play_prev();
   }
-  /*if (digitalRead(BUTTON_VOL_UP))
+  if (digitalRead(BUTTON_VOL_UP))               //reconnaissance de l'appuie sur le bouton et activation de la fonction volume_up
   {
     volum_up();
   }
-    if (digitalRead(BUTTON_VOL_DOWN))
+  if (digitalRead(BUTTON_VOL_DOWN))             //reconnaissance de l'appuie sur le bouton et activation de la fonction volume_down
   {
     volum_down();
-  }*/
+  }
 }
 
 void sendCommand(int8_t command, int16_t dat)
 {
-  if (command == CMD_PLAY)
+  if (command == CMD_PLAY)            
   {
-    playmode = CMD_PLAY;
+    playmode = CMD_PLAY;                
   } 
   if (command == CMD_PAUSE)
   {
@@ -116,7 +173,7 @@ void play_or_pause()
 {
   if(playmode == CMD_PLAY)
   {
-     sendCommand(CMD_PAUSE, 0);
+     sendCommand(CMD_PAUSE, 0);               //si on appuie sur le bouton cela active pause, sinon on fait play
   }
   else 
   {
@@ -124,12 +181,12 @@ void play_or_pause()
   }
 }
 
-void play_next() 
+void play_next()                            //Cette fonction permet de changer de piste au déclenchement du bouton 
 {
   sendCommand(CMD_NEXT_SONG, 0);  
-  if (playmode == CMD_PAUSE)
+  if (playmode == CMD_PAUSE)                //Si on mes la musique en pause et que l'on change de piste , le pause s'annulera et on envoie la commande play
   {
-    sendCommand(CMD_PLAY, 0);
+    sendCommand(CMD_PLAY, 0);               //Et on envoie la commande play
   }
 }
 
@@ -142,20 +199,12 @@ void play_prev()
   }
 }
 
-/*void volum_up()
+void volum_up()
  {
-  sendCommand(CMD_VOLUME_UP, 0);
-  if (playmode == CMD_VOLUME_UP)
-  {
-    sendCommand(CMD_VOLUME_UP, 0);
-  }
+    sendCommand(CMD_VOLUME_UP , 0);               //Fonction qui permet d'envoyer la commande volume augmenté
  }
 
 void volum_down()
  {
-  sendCommand(CMD_VOLUME_DOWN, 0);
-  if (playmode == CMD_VOLUME_DOWN)
-  {
-    sendCommand(CMD_VOLUME_DOWN,0 );
-  }
- }*/
+    sendCommand(CMD_VOLUME_DOWN , 0);            //Fonction qui permet d'envoyer la commande volume diminué
+ }

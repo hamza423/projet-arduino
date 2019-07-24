@@ -2,11 +2,11 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-int buttonG = 12;
-int buttonD = 14;
-int led_milieu = 2;           // Broche de la LED du milieu
-int led_droite = 13;          // Broche de la LED de droite
-int led_gauche = 15;        // Broche de la LED de gauche
+int buttonG = D6;
+int buttonD = D5;
+int led_milieu = D4;           // Broche de la LED du milieu
+int led_droite = D7;          // Broche de la LED de droite
+int led_gauche = D8;        // Broche de la LED de gauche
 int equipe_droite = 0;     // Variable => On stocke la valeur (Read) du Score à 0 pour l'équipe de droite
 int equipe_gauche = 0;    // Variable => On stocke la valeur (Read) du Score à 0 pour l'équipe  de gauche
 
@@ -14,14 +14,17 @@ void setup() {
   // On initilaise le LCD pour .....
   lcd.init();
   lcd.backlight();
+  
   Serial.begin(9600);
+  delay(10);
+  
   //On définit les LED comme des sorties
   pinMode(led_milieu, OUTPUT);
   pinMode(led_droite, OUTPUT);
   pinMode(led_gauche, OUTPUT);
   //On définit les boutons comme des entrées
   pinMode(12, INPUT);
-  pinMode(14,  INPUT);;
+  pinMode(14,  INPUT);
 }
 
 void loop() {
